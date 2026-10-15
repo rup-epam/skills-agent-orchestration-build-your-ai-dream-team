@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f6f8">
+    <meta name="description" content="A clear, contributor-friendly view of project progress, ownership, and priorities.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <div class="header-copy">
+          <p class="eyebrow">TEAM OPERATIONS</p>
+          <h1>Project Pulse</h1>
+          <p class="intro">A shared view of what’s moving, who’s leading, and where a hand could help.</p>
+        </div>
+        <p class="snapshot"><span class="snapshot-dot" aria-hidden="true"></span>Project overview</p>
+      </header>
+
+      <section class="projects-section" aria-labelledby="projects-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">THE WORK, AT A GLANCE</p>
+            <h2 id="projects-heading">Projects</h2>
+          </div>
+          <p class="section-note">Updates are illustrative examples for the team.</p>
+        </div>
+        <div id="project-status" class="load-message" role="status" aria-live="polite">Loading project updates…</div>
+        <ul id="project-list" class="project-grid" aria-label="Project updates"></ul>
+      </section>
+
+      <footer class="dashboard-footer">
+        <p>Have an update? Share it with your project owner so the team can keep this view current.</p>
+      </footer>
+    </main>
+    <script>
+      const projectList = document.querySelector("#project-list");
+      const projectStatus = document.querySelector("#project-status");
+
+      function displayValue(value, fallback) {
+        if (typeof value === "string" && value.trim()) {
+          return value.trim();
+        }
+
+        return fallback;
+      }
+
+      function createDetail(label, value, className) {
+        const item = document.createElement("div");
+        item.className = `project-detail ${className}`;
+
+        const term = document.createElement("dt");
+        term.textContent = label;
+
+        const description = document.createElement("dd");
+        description.textContent = value;
+
+        item.append(term, description);
+        return item;
+      }
+
+      function createProjectCard(project, index) {
+        const card = document.createElement("article");
+        card.className = "project-card";
+
+        const heading = document.createElement("h3");
+        heading.className = "project-name";
+        heading.textContent = displayValue(project?.name, `Untitled project ${index + 1}`);
+
+        const summary = document.createElement("p");
+        summary.className = "project-summary";
+        summary.textContent = displayValue(
+          project?.summary,
+          "A team initiative in progress. Check in with the owner for more context."
+        );
+
+        const details = document.createElement("dl");
+        details.className = "project-details";
+
+        const owner = displayValue(project?.owner, "Owner to be confirmed");
+        details.append(createDetail("Owner", owner, "owner-detail"));
+
+        const status = displayValue(project?.status, "Status not set");
+        const statusDetail = createDetail("Status", status, "status-detail");
+        const statusBadge = statusDetail.querySelector("dd");
+        statusBadge.classList.add("status-badge");
+        statusBadge.dataset.status = status.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        details.append(statusDetail);
+
+        const priority = displayValue(project?.priority, "Priority not set");
+        const priorityDetail = createDetail("Priority", priority, "priority-detail");
+        const priorityBadge = priorityDetail.querySelector("dd");
+        priorityBadge.classList.add("priority-badge");
+        priorityBadge.dataset.priority = priority.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        details.append(priorityDetail);
+
+        const activity = document.createElement("div");
+        activity.className = "recent-activity";
+
+        const activityHeading = document.createElement("h4");
+        activityHeading.textContent = "Recent activity";
+
+        const activityText = document.createElement("p");
+        activityText.textContent = displayValue(
+          project?.recentActivity,
+          "No recent activity has been shared yet."
+        );
+        activity.append(activityHeading, activityText);
+
+        card.append(heading, summary, details, activity);
+        const listItem = document.createElement("li");
+        listItem.append(card);
+        return listItem;
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`Project data could not be loaded (HTTP ${response.status}).`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("Project data must contain a projects list.");
+          }
+
+          projectList.replaceChildren();
+          if (data.projects.length === 0) {
+            projectStatus.textContent = "There are no projects to show yet. Check back when a project is added.";
+            return;
+          }
+
+          data.projects.forEach((project, index) => {
+            projectList.append(createProjectCard(project, index));
+          });
+          projectStatus.textContent = `${data.projects.length} project${data.projects.length === 1 ? "" : "s"} in view`;
+        } catch (error) {
+          projectStatus.textContent = error instanceof Error
+            ? `${error.message} Try refreshing the page, or check that the dashboard is served over HTTP.`
+            : "Project updates are unavailable. Try refreshing the page.";
+          projectStatus.classList.add("load-message-error");
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

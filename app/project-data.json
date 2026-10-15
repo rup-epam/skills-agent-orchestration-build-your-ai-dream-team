@@ -1,0 +1,44 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Onboarding",
+      "owner": "Avery Chen",
+      "status": "On track",
+      "recentActivity": "Published the refreshed getting-started guide and welcomed three new contributors.",
+      "priority": "High",
+      "summary": "Make the first contribution feel clear and welcoming, from setup through the first review."
+    },
+    {
+      "name": "Community Events",
+      "owner": "Jordan Rivera",
+      "status": "At risk",
+      "recentActivity": "Venue options are shortlisted; the team is confirming a date with local hosts.",
+      "priority": "Medium",
+      "summary": "Bring contributors together with small, practical events that strengthen community connections."
+    },
+    {
+      "name": "Documentation Refresh",
+      "owner": "Samira Patel",
+      "status": "In progress",
+      "recentActivity": "Finished the content audit and opened the first round of page updates for review.",
+      "priority": "Medium",
+      "summary": "Keep project guidance accurate, easy to navigate, and useful for both new and returning contributors."
+    },
+    {
+      "name": "Release Readiness",
+      "owner": "Morgan Lee",
+      "status": "Planning",
+      "recentActivity": "Collected release checklist feedback from maintainers; kickoff notes are ready to share.",
+      "priority": "Low",
+      "summary": "Coordinate a predictable release process and make important handoffs visible to the team."
+    },
+    {
+      "name": "Accessibility Improvements",
+      "owner": "Taylor Brooks",
+      "status": "Complete",
+      "recentActivity": "Keyboard navigation and contrast fixes were reviewed and included in the latest update.",
+      "priority": "Low",
+      "summary": "Remove barriers in key contributor workflows through regular, focused accessibility improvements."
+    }
+  ]
+}
